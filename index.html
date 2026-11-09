@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Os riscos da IA em ataques cibernéticos e armas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070707;--navy:#121212;--deep:#1c1c1c;--cy:#bdbdbd;--tx:#f2f2f2;--mu:#a6a6a6;--rd:#ffffff;--ln:rgba(255,255,255,.14);--gl:rgba(24,24,24,.72);
+--h:'Sora','Segoe UI',system-ui,sans-serif;--b:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;box-sizing:border-box;color-scheme:dark}
+*,*::before,*::after{box-sizing:inherit}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--tx);font-family:var(--b);overflow:hidden}
+body{font-size:clamp(16px,1.1vw + 8px,19px);line-height:1.5}
+#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0}
+.grid{position:fixed;inset:0;z-index:0;background:radial-gradient(900px 500px at 15% 0,rgba(70,70,70,.45),transparent 70%),radial-gradient(700px 500px at 100% 100%,rgba(200,200,200,.09),transparent 70%),linear-gradient(var(--ln) 1px,transparent 1px) 0 0/48px 48px,linear-gradient(90deg,var(--ln) 1px,transparent 1px) 0 0/48px 48px;opacity:.55;animation:drift 40s linear infinite}
+@keyframes drift{to{background-position:0 0,0 0,48px 48px,48px 48px}}
+.slide{position:fixed;inset:0;z-index:1;overflow-y:auto;overflow-x:hidden;padding:clamp(20px,4vw,48px) clamp(16px,5vw,64px) calc(128px + env(safe-area-inset-bottom,0px));padding-top:calc(clamp(20px,4vw,48px) + env(safe-area-inset-top,0px));visibility:hidden;opacity:0;transform:translateX(24px);transition:opacity .5s,transform .5s,visibility 0s .5s;-webkit-overflow-scrolling:touch}
+.slide.on{visibility:visible;opacity:1;transform:none;transition:opacity .5s,transform .5s}
+.slide.out{transform:translateX(-24px)}
+.wrap{max-width:1180px;margin:0 auto}
+h1,h2,h3{font-family:var(--h);margin:0;line-height:1.15;letter-spacing:-.01em}
+h1{font-size:clamp(1.9rem,5.2vw,3.6rem);max-width:18ch;text-wrap:balance}
+h2{font-size:clamp(1.5rem,3.6vw,2.5rem);max-width:24ch;text-wrap:balance}
+h3{font-size:1.1rem}
+p{margin:0}
+.tag{display:inline-block;color:var(--cy);font:600 .8rem var(--h);margin-bottom:12px}
+.lead{color:var(--mu);max-width:62ch;margin-top:14px}
+.card{background:var(--gl);border:1px solid var(--ln);border-radius:14px;padding:16px 18px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:border-color .3s,transform .3s}
+.card:hover{border-color:rgba(200,200,200,.5);transform:translateY(-2px)}
+.card.r{border-color:rgba(255,255,255,.35)}.card.r:hover{border-color:var(--rd)}
+.card h3{margin-bottom:6px}.card p{color:var(--mu);font-size:.98rem}
+.r h3,.rd{color:var(--rd)}.cy{color:var(--cy)}
+.g{display:grid;gap:14px;margin-top:22px;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))}
+.src{display:block;margin-top:8px;font-size:.74rem;color:#808080}
+.src a{color:#d0d0d0}
+.quote{margin-top:26px;padding:18px 22px;border-left:3px solid var(--cy);background:linear-gradient(90deg,rgba(200,200,200,.1),transparent);font:600 clamp(1rem,2.2vw,1.35rem)/1.4 var(--h);border-radius:0 12px 12px 0}
+.quote.r{border-color:var(--rd);background:linear-gradient(90deg,rgba(255,255,255,.12),transparent)}
+/* entrada: só ao abrir o slide */
+.rv{opacity:1}
+.on .rv{animation:in .7s cubic-bezier(.2,.7,.2,1) backwards;animation-delay:calc(var(--i,0)*90ms + 150ms)}
+@keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+/* S1 evolução */
+.evo{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:28px}
+.evo::before{content:"";position:absolute;left:12%;right:12%;top:22px;height:2px;background:linear-gradient(90deg,var(--cy),var(--rd));transform-origin:left;transform:scaleX(0)}
+.on .evo::before{animation:line 1.6s .4s ease forwards}
+@keyframes line{to{transform:scaleX(1)}}
+.st{position:relative;text-align:center;padding:0 4px}
+.dot{width:44px;height:44px;margin:0 auto 10px;border-radius:50%;display:grid;place-items:center;font:700 1rem var(--h);background:var(--navy);border:2px solid var(--cy);color:var(--cy)}
+.st:last-child .dot{border-color:var(--rd);color:var(--rd);box-shadow:0 0 18px rgba(255,255,255,.4)}
+.st b{display:block;font-family:var(--h);font-size:.95rem}.st span{color:var(--mu);font-size:.82rem}
+.big{margin-top:28px;text-align:center;padding:clamp(22px,4vw,40px) clamp(16px,4vw,40px);border-radius:18px;border:1px solid var(--ln);background:radial-gradient(600px 200px at 50% 0,rgba(200,200,200,.14),transparent),var(--gl);font:700 clamp(1.25rem,3.4vw,2.2rem)/1.25 var(--h);text-wrap:balance}
+/* S2 diagrama */
+.flow{display:flex;flex-direction:column;align-items:center;gap:0;margin-top:22px}
+.fn{width:min(100%,460px);text-align:center;padding:12px 16px;border-radius:12px;border:1px solid var(--cy);background:var(--gl);font:600 .95rem var(--h)}
+.fn.e{border-color:var(--rd);color:var(--rd)}
+.fa{width:2px;height:22px;background:linear-gradient(var(--cy),transparent);position:relative;overflow:hidden}
+.fa::after{content:"";position:absolute;left:0;top:-8px;width:2px;height:8px;background:#fff;animation:fl 1.6s infinite}
+@keyframes fl{to{top:22px}}
+/* S3 */
+.num{font:700 clamp(1.7rem,4vw,2.5rem) var(--h);color:var(--cy)}
+.num.r{color:var(--rd)}
+.tl{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:6px}
+.tl::before{content:"";position:absolute;left:0;right:0;top:7px;height:2px;background:var(--ln)}
+.tp{position:relative;padding-top:24px}
+.tp::before{content:"";position:absolute;top:0;left:0;width:16px;height:16px;border-radius:50%;background:var(--cy);box-shadow:0 0 12px var(--cy)}
+.tp b{font-family:var(--h);font-size:.9rem;display:block}.tp span{color:var(--mu);font-size:.85rem}
+.fp{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:14px;margin-top:22px}
+.fp .card h3{font-size:.9rem}
+.fp ul,.cl{margin:6px 0 0;padding-left:18px;color:var(--mu);font-size:.9rem}
+.fp li{margin-bottom:5px}
+.lab{font:700 .8rem var(--h)}
+/* S4 */
+.fl4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:22px;align-items:stretch}
+.n4{position:relative;text-align:center;padding:14px 8px;border-radius:12px;border:1px solid var(--ln);background:var(--gl);font:600 .85rem var(--h);animation:hl 6s infinite;animation-delay:calc(var(--k)*1.5s)}
+.n4 small{display:block;margin-top:4px;font:400 .76rem var(--b);color:var(--mu)}
+.n4:not(:last-child)::after{content:"›";position:absolute;right:-9px;top:50%;transform:translateY(-50%);color:var(--cy);font-size:1.3rem;z-index:2}
+@keyframes hl{0%,22%{border-color:var(--cy);box-shadow:0 0 20px rgba(200,200,200,.35)}28%,100%{border-color:var(--ln);box-shadow:none}}
+.n4.l{animation-name:hr}
+@keyframes hr{0%,22%{border-color:var(--rd);box-shadow:0 0 20px rgba(255,255,255,.4)}28%,100%{border-color:var(--ln);box-shadow:none}}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0;padding:0;list-style:none}
+.chips li{padding:6px 12px;border-radius:99px;border:1px solid var(--ln);font-size:.85rem;background:rgba(255,255,255,.03)}
+.chips.r li{border-color:rgba(255,255,255,.4)}
+.chips.c li{border-color:rgba(200,200,200,.45)}
+/* S5 */
+.bars{display:grid;gap:10px;margin-top:14px}
+.br{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px 14px;align-items:center;font-size:.82rem;color:var(--mu)}
+.tr{height:10px;border-radius:9px;background:rgba(255,255,255,.07);overflow:hidden}
+.tr i{display:block;height:100%;border-radius:9px;background:var(--rd);width:92%}
+.tr.k i{background:var(--cy);width:38%}
+.on .tr i{animation:gr 1.4s ease both}
+.on .tr.k i{animation-delay:1.2s}
+@keyframes gr{from{width:0}}
+.pipe{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin-top:20px;font:600 .9rem var(--h)}
+.pipe span{padding:8px 16px;border-radius:99px;border:1px solid var(--ln)}
+.pipe .a{border-color:var(--rd);color:var(--rd)}.pipe .b{border-color:var(--cy);color:var(--cy)}.pipe .c{border-color:#fff}
+/* S6 */
+.core{margin:24px auto 0;text-align:center;padding:20px 24px;border-radius:99px;border:1px solid var(--cy);width:fit-content;max-width:100%;font:700 clamp(1.05rem,3vw,1.7rem) var(--h);letter-spacing:.02em;box-shadow:0 0 40px rgba(200,200,200,.2);animation:pu 4s ease-in-out infinite}
+@keyframes pu{50%{box-shadow:0 0 60px rgba(200,200,200,.38)}}
+.srcs{margin:10px 0 0;padding-left:18px;font-size:.84rem;color:var(--mu)}
+.srcs li{margin-bottom:5px}.srcs a{color:#d0d0d0;overflow-wrap:anywhere}
+/* nav */
+nav{position:fixed;left:0;right:0;bottom:0;z-index:5;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));background:linear-gradient(transparent,rgba(7,7,7,.92) 40%);}
+.pg{max-width:420px;margin:0 auto 8px;height:3px;background:rgba(255,255,255,.1);border-radius:3px}
+.pg i{display:block;height:100%;width:0;background:var(--cy);border-radius:3px;transition:width .5s}
+.nv{display:flex;justify-content:center;align-items:center;gap:20px;font:600 .95rem var(--h)}
+.nv button{width:46px;height:46px;border-radius:50%;border:1px solid var(--ln);background:var(--gl);color:var(--tx);font-size:1.2rem;cursor:pointer;transition:border-color .2s}
+.nv button:hover:not(:disabled){border-color:var(--cy)}.nv button:disabled{opacity:.3;cursor:default}
+.nv button:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
+.nv span{min-width:56px;text-align:center}
+@media(max-width:720px){
+ .evo{grid-template-columns:1fr;gap:16px;padding-left:4px}
+ .evo::before{left:26px;right:auto;top:22px;bottom:30px;width:2px;height:auto;transform-origin:top;transform:scaleY(0)}
+ .on .evo::before{animation-name:lineY}
+ .st{display:grid;grid-template-columns:44px 1fr;gap:0 14px;text-align:left;align-items:center}
+ .st .dot{margin:0;grid-row:span 2}
+ .fl4{grid-template-columns:1fr}
+ .n4:not(:last-child)::after{content:"⌄";right:auto;left:50%;top:auto;bottom:-16px;transform:translateX(-50%)}
+ .tl{grid-template-columns:1fr}.tl::before{display:none}
+ .br{grid-template-columns:1fr}
+}
+@keyframes lineY{to{transform:scaleY(1)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.rv{opacity:1}}
+
+.card.r{border-left:3px solid #fff}
+.ch{margin-top:14px}
+.ch svg{width:100%;height:auto;display:block;margin-top:8px;overflow:visible}
+.ch .ax{stroke:rgba(255,255,255,.15);stroke-width:1}
+.ch .ln{fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.on .ch .ln{stroke-dasharray:1;stroke-dashoffset:1;animation:dw 2s .6s ease forwards}
+@keyframes dw{to{stroke-dashoffset:0}}
+.ch text{fill:#a6a6a6;font:11px var(--b)}.ch .v{fill:#fff;font:600 12px var(--h)}
+.ch circle{fill:#070707;stroke:#fff;stroke-width:2}
+.stk{display:flex;height:26px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,.08);margin-top:10px}
+.stk .ia{width:0;background:linear-gradient(90deg,#8a8a8a,#fff);border-radius:8px 0 0 8px}
+.on .stk .ia{animation:sw 1.6s .6s ease forwards}
+@keyframes sw{to{width:85%}}
+.stk .fz{width:5%;background:repeating-linear-gradient(45deg,rgba(255,255,255,.35) 0 4px,transparent 4px 8px);opacity:.7}
+.lg{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;font-size:.84rem;color:var(--mu)}
+.lg b{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;background:#fff}
+.lg b.h{background:repeating-linear-gradient(45deg,#aaa 0 2px,transparent 2px 4px);border:1px solid #888}
+.sim{margin-top:22px;border-color:rgba(255,255,255,.28)}
+.cmd{font:500 .9rem/1.5 ui-monospace,Menlo,Consolas,monospace;padding:12px 14px;border-radius:10px;background:#000;border:1px solid var(--ln);color:#e6e6e6}
+.cmd i{font-style:normal;color:#888}
+.arena{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) minmax(0,1fr);gap:10px;align-items:center;margin-top:16px}
+.nd{text-align:center;padding:14px 8px;border-radius:12px;border:1px solid var(--cy);background:#0d0d0d;font:600 .9rem var(--h);position:relative}
+.nd small{display:block;font:400 .74rem var(--b);color:var(--mu);margin-top:3px}
+.nd.t{transition:all .4s}
+.nd.t.ok{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.15),0 0 26px rgba(255,255,255,.3)}
+.nd.t.bad{border-style:dashed;border-color:#fff;animation:fk .5s 4}
+@keyframes fk{50%{opacity:.35}}
+.nd.a.go{animation:pl 1s infinite}
+@keyframes pl{50%{box-shadow:0 0 22px rgba(255,255,255,.35)}}
+.lane{position:relative;height:36px;border-top:1px dashed rgba(255,255,255,.25);border-bottom:1px dashed rgba(255,255,255,.25);overflow:hidden}
+.lane i{position:absolute;top:50%;left:0;width:10px;height:10px;margin-top:-5px;border-radius:2px;background:#fff;opacity:0}
+.lane.run i{animation:mv 1.6s linear infinite}
+.lane.run.blk i{animation-name:mvb}
+.lane i:nth-child(2){animation-delay:.5s!important}.lane i:nth-child(3){animation-delay:1s!important}
+@keyframes mv{0%{left:0;opacity:1}100%{left:calc(100% - 10px);opacity:1}}
+@keyframes mvb{0%{left:0;opacity:1}60%{left:62%;opacity:1}75%,100%{left:62%;opacity:0}}
+.lane.blk::after{content:"";position:absolute;top:0;bottom:0;left:68%;width:3px;background:#fff;opacity:0;box-shadow:0 0 12px #fff}
+.lane.run.blk::after{opacity:1}
+.log{list-style:none;margin:14px 0 0;padding:0;min-height:5.6em;font-size:1rem;color:var(--mu)}
+.log li{padding:3px 0;animation:in .4s both}
+.log li.k{color:#fff;font-weight:600}
+.ctl{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center;margin-top:12px}
+.btn{padding:10px 20px;border-radius:99px;border:1px solid #fff;background:#fff;color:#000;font:600 .9rem var(--h);cursor:pointer;min-height:44px}
+.btn:disabled{opacity:.4;cursor:default}
+.btn:focus-visible,.sw input:focus-visible+span{outline:2px solid #fff;outline-offset:2px}
+.sw{display:flex;align-items:center;gap:10px;font-size:.9rem;cursor:pointer;min-height:44px}
+.sw input{position:absolute;opacity:0;width:1px;height:1px}
+.sw span{width:44px;height:24px;border-radius:99px;background:#333;position:relative;transition:.3s;flex:none}
+.sw span::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.3s}
+.sw input:checked+span{background:#777}.sw input:checked+span::after{left:23px}
+.nt{font-size:.76rem;color:#808080;margin-top:10px}
+@media(max-width:720px){
+ .arena{grid-template-columns:1fr;gap:6px}
+ .lane{height:56px;width:36px;margin:0 auto;border:0;border-left:1px dashed rgba(255,255,255,.25);border-right:1px dashed rgba(255,255,255,.25)}
+ .lane i{left:50%;top:0;margin:0 0 0 -5px}
+ .lane.blk::after{left:0;right:0;width:auto;height:3px;top:72%;bottom:auto}
+}
+.sum{margin-top:16px;padding:14px 18px;border-radius:12px;border:1px solid rgba(255,255,255,.25);border-left:4px solid #fff;background:rgba(255,255,255,.06);max-width:62ch;font-size:clamp(1.08rem,2.2vw,1.35rem);line-height:1.4}
+.sum b{color:#fff;font-family:var(--h)}
+.tt{text-align:center;font-size:.76rem;color:#8a8a8a;margin-top:6px}
+.cnt{font-size:.9rem;color:var(--mu)}.cnt b{color:#fff;font-family:var(--h);display:inline-block;min-width:3ch}
+
+#sp{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(280px circle at var(--x,60%) var(--y,25%),rgba(255,255,255,.07),transparent 70%)}
+.st .dot{animation:dg 6s 2s infinite}
+.st:nth-child(2) .dot{animation-delay:3.2s}.st:nth-child(3) .dot{animation-delay:4.4s}.st:nth-child(4) .dot{animation-delay:5.6s}
+@keyframes dg{0%,18%{box-shadow:0 0 24px rgba(255,255,255,.6);background:#333}28%,100%{box-shadow:none;background:var(--navy)}}
+.pbar{height:4px;border-radius:4px;background:rgba(255,255,255,.1);margin-top:14px;overflow:hidden}
+.pbar i{display:block;height:100%;width:0;background:#fff;transition:width .6s}
+.nd small+small{color:#fff;margin-top:6px;font-weight:600}
+.tr i{transition:width .5s}
+input[type=range]{width:100%;margin:12px 0 4px;accent-color:#fff;height:28px}
+.hx{margin-top:10px;font-weight:600;color:#fff;min-height:3em}
+.chips.c li{cursor:pointer;transition:background .25s,color .25s,transform .2s;user-select:none}
+.chips.c li:hover{transform:translateY(-2px)}
+.chips.c li.on{background:#fff;color:#000;border-color:#fff}
+.chips.c li:focus-visible{outline:2px solid #fff;outline-offset:2px}
+
+.card:hover{transform:perspective(700px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(-2px)}
+.msg{margin-top:10px;padding:14px;border-radius:12px;background:#000;border:1px dashed rgba(255,255,255,.3);font:.95rem/1.5 ui-monospace,Menlo,Consolas,monospace;min-height:6.5em;overflow-wrap:anywhere}
+.chips.hot li{background:#fff;color:#000;border-color:#fff}
+.wg{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin-top:14px}
+.wg .c{aspect-ratio:1;border-radius:4px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);transition:background .3s,box-shadow .3s}
+.wg .c.x{background:#fff;box-shadow:0 0 10px rgba(255,255,255,.55)}
+.big{min-height:3.2em}
+
+details{margin-top:12px;border-top:1px solid var(--ln);padding-top:2px}
+summary{cursor:pointer;font:600 .92rem var(--h);min-height:44px;display:flex;align-items:center;list-style:none;color:#fff}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"+";display:inline-grid;place-items:center;width:22px;height:22px;margin-right:10px;border:1px solid rgba(255,255,255,.35);border-radius:50%;flex:none}
+details[open] summary::before{content:"–"}
+details ul{margin:2px 0 8px;padding-left:18px;color:var(--mu);font-size:.93rem}
+details li{margin-bottom:6px}
+details p{color:var(--mu);font-size:.93rem;margin-top:6px}
+details b{color:#fff}
+summary:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.gl{width:100%;max-width:460px;height:auto;display:block;margin:12px auto 0}
+.gb{fill:none;stroke:rgba(255,255,255,.18)}
+.gl .n0{fill:#070707;stroke:#fff;stroke-width:2}
+.gl text{fill:#d0d0d0;font:600 11px var(--h);text-anchor:middle}
+.arc{fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1}
+.arc.fire{animation:dw 1.1s ease forwards}
+.arc0{fill:none;stroke:#fff;stroke-width:1.5;stroke-dasharray:4 4;opacity:0;transition:opacity .4s}
+.arc0.chk{opacity:.8}
+.rg{fill:none;stroke:#fff;stroke-width:2;opacity:0;transform-box:fill-box;transform-origin:center}
+.rg.pop{animation:rp 1.2s ease-out}
+@keyframes rp{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(4)}}
+.how{margin-top:10px;font-size:.92rem;font-weight:600;color:#fff;padding-left:12px;border-left:2px solid #fff}
+.log li:last-child{color:#fff}
+html{scroll-behavior:smooth}
+.nv{position:relative}#fs{position:absolute;right:0;font-size:1rem}
+.slide:focus{outline:none}
+</style>
+</head>
+<body>
+<div id="sp" aria-hidden="true"></div><canvas id="bg" aria-hidden="true"></canvas><div class="grid" aria-hidden="true"></div>
+
+<!-- SLIDE 1 -->
+<section class="slide on" aria-label="Slide 1"><div class="wrap">
+ <span class="tag rv">Os riscos da inteligência artificial em ataques cibernéticos e armas</span>
+ <h1 class="rv" style="--i:1">A IA está ficando mais capaz. E os riscos?</h1>
+ <p class="lead rv" style="--i:2">A IA faz tarefas cada vez mais difíceis. Isso ajuda muito, mas também preocupa.</p><div class="sum rv" style="--i:2"><b>Em resumo:</b> a IA está mais capaz, então os riscos também crescem.</div>
+ <div class="evo rv" style="--i:3">
+  <div class="st"><div class="dot">1</div><b>IA que responde</b><span>Tira dúvidas</span></div>
+  <div class="st"><div class="dot">2</div><b>IA que analisa</b><span>Entende dados</span></div>
+  <div class="st"><div class="dot">3</div><b>IA que executa tarefas</b><span>Age quase sozinha</span></div>
+  <div class="st"><div class="dot">4</div><b>IA em alto risco</b><span>Ataques digitais e uso militar</span></div>
+ </div>
+ <div class="g g2">
+  <div class="card rv" style="--i:4"><h3 class="cy">Potencial</h3><p>Ajuda em pesquisas, análises e até na defesa de sistemas.</p></div>
+  <div class="card r rv" style="--i:5"><h3>Risco</h3><p>As mesmas habilidades podem ser usadas para fazer o mal.</p>
+   <span class="src">Anthropic, nov/2025. <a href="https://www.anthropic.com/news/disrupting-AI-espionage" target="_blank" rel="noopener">Fonte</a></span></div>
+ </div>
+ <div class="card ch rv" style="--i:6"><h3>Dobrar a cada 6 meses: o que é isso?</h3>
+  <svg viewBox="0 0 360 170" role="img" aria-label="Gráfico: algo que dobra a cada 6 meses chega a 16 vezes em 2 anos">
+   <line class="ax" x1="20" y1="140" x2="345" y2="140"/><line class="ax" x1="20" y1="100" x2="345" y2="100"/><line class="ax" x1="20" y1="60" x2="345" y2="60"/>
+   <path class="ln" pathLength="1" d="M35 133 L110 126 L185 112 L260 85 L335 30"/>
+   <circle cx="35" cy="133" r="4"/><circle cx="110" cy="126" r="4"/><circle cx="185" cy="112" r="4"/><circle cx="260" cy="85" r="4"/><circle cx="335" cy="30" r="4"/>
+   <text class="v" x="35" y="122" text-anchor="middle">1x</text><text class="v" x="110" y="115" text-anchor="middle">2x</text><text class="v" x="185" y="101" text-anchor="middle">4x</text><text class="v" x="260" y="74" text-anchor="middle">8x</text><text class="v" x="320" y="22" text-anchor="middle">16x</text>
+   <text x="35" y="160" text-anchor="middle">hoje</text><text x="110" y="160" text-anchor="middle">6 meses</text><text x="185" y="160" text-anchor="middle">1 ano</text><text x="260" y="160" text-anchor="middle">1,5 ano</text><text x="335" y="160" text-anchor="middle">2 anos</text>
+  </svg>
+  <span class="src">Ilustração de matemática. A Anthropic disse que, nos testes dela, a habilidade da IA em segurança digital dobrou em 6 meses. Não é previsão.</span></div>
+ <div class="big rv" id="bq" style="--i:7">O que acontece quando capacidades cada vez maiores chegam às mãos erradas?</div>
+</div></section>
+
+<!-- SLIDE 2 -->
+<section class="slide" aria-label="Slide 2"><div class="wrap">
+ <span class="tag rv">IA + ataques cibernéticos</span>
+ <h2 class="rv" style="--i:1">Quando a IA entra no mundo dos ataques digitais</h2>
+ <p class="lead rv" style="--i:2">A IA pode fazer tarefas sozinha, rápido e em grande quantidade. Aqui o foco são os riscos, não como atacar.</p><div class="sum rv" style="--i:2"><b>Em resumo:</b> a IA deixa golpes e ataques mais rápidos e em maior quantidade.</div>
+ <div class="flow rv" style="--i:3">
+  <div class="fn">IA</div><div class="fa"></div>
+  <div class="fn">Faz sozinha · analisa · é rápida</div><div class="fa"></div>
+  <div class="fn">Mais força para certas atividades</div><div class="fa"></div>
+  <div class="fn e">Possíveis impactos</div>
+ </div>
+ <div class="g">
+  <div class="card r rv" style="--i:4"><h3>Golpes mais convincentes</h3><p>Conteúdos falsos ficam mais convincentes. Em 2025, a IA criou identidades falsas para fraudar empregos remotos.</p></div>
+  <div class="card r rv" style="--i:5"><h3>Automação</h3><p>Muitas tarefas ao mesmo tempo, com menos gente.</p></div>
+  <div class="card r rv" style="--i:6"><h3>Velocidade</h3><p>O que levava tempo fica rápido. Em um caso real, a IA fez milhares de pedidos, vários por segundo.</p></div>
+  <div class="card r rv" style="--i:7"><h3>Exposição de dados</h3><p>Dados podem ser apagados ou vazar. Um caso de extorsão atingiu 17 organizações ou mais.</p></div>
+  <div class="card r rv" style="--i:8"><h3>Dificuldade de defesa</h3><p>Quem defende precisa acompanhar ameaças que mudam rápido.</p></div>
+ </div>
+ <div class="card sim rv" style="--i:9"><h3>Simulação: a IA tentando entrar em um sistema</h3>
+  <p style="margin-top:6px">Tudo é de mentira. Mostra só a ideia: com e sem proteção.</p><p class="how">Como usar: aperte “Executar comando”. Depois desligue a proteção e aperte de novo para comparar.</p>
+  <div class="cmd" style="margin-top:12px"><i>comando pronto &gt;</i> “IA, tente entrar no sistema de uma empresa fictícia.”</div>
+  <div class="arena" id="ar"><div class="nd a" id="na">IA atacante<small>fictícia</small></div><div class="lane" id="ln"><i></i><i></i><i></i></div><div class="nd t" id="nt">Sistema da empresa<small>fictício</small><small id="ns">dados: normais</small></div></div>
+  <div class="pbar"><i id="sb"></i></div>
+  <ul class="log" id="lg" aria-live="polite"></ul>
+  <div class="ctl"><button class="btn" id="go">▶ Executar comando</button><label class="sw"><input type="checkbox" id="pr" checked><span></span>Proteção ligada</label><span class="cnt">Tentativas (fictício): <b id="tc">0</b></span></div>
+  <p class="nt">Simulação fictícia. Não mostra nenhuma técnica real de ataque.</p><details><summary>Entenda a simulação</summary><ul>
+  <li><b>IA atacante:</b> um programa inventado, só para a simulação.</li>
+  <li><b>Sistema da empresa:</b> o computador de uma empresa inventada, com dados guardados.</li>
+  <li><b>Quadradinhos andando:</b> as tentativas de entrar. O contador de tentativas é inventado.</li>
+  <li><b>Barra branca (proteção ligada):</b> uma defesa que percebe tentativas estranhas e bloqueia.</li></ul>
+  <p><b>Na vida real:</b> no caso da Anthropic, a IA fez milhares de pedidos, vários por segundo, e a empresa detectou e bloqueou as contas. Por isso defesa e vigilância importam.</p></details></div>
+ <div class="card rv" style="--i:10;margin-top:14px"><h3>Mensagem de golpe: antes e depois da IA</h3><p class="how">Como usar: ligue “Escrita por IA” e compare as duas mensagens.</p>
+  <div class="msg" id="pm"></div>
+  <ul class="chips r" id="pc"><li>Cria pressa</li><li>Pede dados</li><li>Traz um link</li></ul>
+  <div class="ctl"><label class="sw"><input type="checkbox" id="pg"><span></span>Escrita por IA</label></div>
+  <p class="hx" id="pt"></p><span class="src">Exemplo inventado, só para ilustrar.</span><details><summary>Entenda a simulação</summary><ul>
+  <li><b>Golpe:</b> mensagem que tenta enganar você para clicar ou passar seus dados.</li>
+  <li><b>Antes da IA:</b> os erros de escrita ajudavam a desconfiar.</li>
+  <li><b>Com IA:</b> o texto pode ficar perfeito, então o jeito de escrever não prova nada.</li>
+  <li><b>O que entrega o golpe:</b> pressa, pedido de dados e link. Na dúvida, não clique e abra o app oficial.</li>
+  <li>O texto é inventado e o [link] é só um marcador. Não existe.</li></ul></details></div>
+ <span class="src rv" style="--i:10">Fontes: Anthropic, <a href="https://www.anthropic.com/news/detecting-countering-misuse-aug-2025" target="_blank" rel="noopener">ago/2025</a> e <a href="https://www.anthropic.com/news/disrupting-AI-espionage" target="_blank" rel="noopener">nov/2025</a>.</span>
+ <div class="quote rv" style="--i:11">O risco não está apenas na existência da IA, mas em como suas capacidades são utilizadas.</div>
+</div></section>
+
+<!-- SLIDE 3 -->
+<section class="slide" aria-label="Slide 3"><div class="wrap">
+ <span class="tag rv">Caso real documentado</span>
+ <h2 class="rv" style="--i:1">O que as evidências mostram?</h2>
+ <p class="lead rv" style="--i:2">Em nov/2025, a Anthropic contou um caso de espionagem digital em que a IA fez quase todo o trabalho.</p><div class="sum rv" style="--i:2"><b>Em resumo:</b> isso já aconteceu de verdade e foi documentado pela Anthropic.</div>
+ <div class="g g2">
+  <div class="card rv" style="--i:3"><h3><span class="cy">01</span> O que aconteceu?</h3><p>Em setembro de 2025, a Anthropic achou uma espionagem bem planejada. Ela acredita que o grupo era apoiado pelo governo da China.</p></div>
+  <div class="card rv" style="--i:4"><h3><span class="cy">02</span> Como a IA foi envolvida?</h3><p>Os atacantes enganaram a IA (Claude Code): dividiram o plano em tarefas pequenas e disseram que ela trabalhava para uma empresa de segurança.</p></div>
+  <div class="card r rv" style="--i:5"><h3><span class="rd">03</span> Qual foi o risco?</h3><p>A empresa diz ser o 1º caso de grande ataque feito quase sem ajuda humana. Alvos: empresas, bancos, indústrias e governos.</p></div>
+  <div class="card rv" style="--i:6"><h3><span class="cy">04</span> O que isso nos mostra?</h3><p>IA que age sozinha facilita ataques difíceis. Mas também ajuda na defesa: a Anthropic usou o Claude para analisar os dados.</p></div>
+ </div>
+ <div class="g" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr))">
+  <div class="card rv" style="--i:7"><div class="num" data-a="80" data-b="90" data-s="%">80–90%</div><p>do trabalho feito pela IA</p></div>
+  <div class="card rv" style="--i:8"><div class="num" data-a="4" data-b="6">4–6</div><p>decisões importantes de pessoas</p></div>
+  <div class="card rv" style="--i:9"><div class="num" data-a="30" data-p="~">~30</div><p>alvos; poucos deram certo</p></div>
+  <div class="card rv" style="--i:10"><div class="num r" data-a="17" data-p="≥">≥17</div><p>organizações no caso de extorsão (ago/2025)</p></div>
+ </div>
+ <div class="card ch rv" style="--i:10"><h3>Quem fez o trabalho nessa campanha?</h3>
+  <div class="stk" role="img" aria-label="IA fez 80 a 90 por cento do trabalho"><div class="ia"></div><div class="fz"></div></div>
+  <div class="lg"><span><b></b>IA: 80–90%</span><span><b class="h"></b>Pessoas: o restante, só nas decisões importantes</span></div></div>
+ <div class="card rv" style="--i:11;margin-top:14px"><h3>Linha do tempo</h3>
+  <div class="tl">
+   <div class="tp"><b>Meados de set/2025</b><span>Atividade suspeita é detectada</span></div>
+   <div class="tp"><b>Cerca de 10 dias</b><span>Investigação, contas bloqueadas e vítimas avisadas</span></div>
+   <div class="tp"><b>13 nov/2025</b><span>Relatório publicado</span></div>
+  </div>
+ </div>
+ <div class="fp">
+  <div class="card rv" style="--i:12"><h3 class="cy lab">FATO</h3><ul><li>Registrado pela própria Anthropic.</li><li>A IA fez 80–90% do trabalho.</li><li>Foram cerca de 30 alvos, e poucos ataques deram certo.</li><li>A IA também errou: inventou senhas e chamou de secretas informações que eram públicas.</li></ul></div>
+  <div class="card r rv" style="--i:13"><h3 class="rd lab">POSSIBILIDADE</h3><ul><li>Esses ataques podem ficar mais eficazes (é uma previsão da Anthropic, não um fato).</li><li>Grupos com menos experiência poderiam tentar ataques desse tamanho.</li><li>Outras IAs podem ser usadas do mesmo jeito.</li></ul></div>
+ </div>
+ <span class="src rv" style="--i:14">Fontes: <a href="https://www.anthropic.com/news/disrupting-AI-espionage" target="_blank" rel="noopener">Anthropic (13/11/2025)</a> · <a href="https://assets.anthropic.com/m/ec212e6566a0d47/original/Disrupting-the-first-reported-AI-orchestrated-cyber-espionage-campaign.pdf" target="_blank" rel="noopener">relatório completo</a> · <a href="https://www.anthropic.com/news/detecting-countering-misuse-aug-2025" target="_blank" rel="noopener">Anthropic (27/08/2025)</a>.</span>
+</div></section>
+
+<!-- SLIDE 4 -->
+<section class="slide" aria-label="Slide 4"><div class="wrap">
+ <span class="tag rv">IA e armas</span>
+ <h2 class="rv" style="--i:1">Quando a IA entra em decisões militares</h2>
+ <p class="lead rv" style="--i:2">Aqui falamos só dos riscos. Sem detalhes de como fazer armas ou ataques.</p><div class="sum rv" style="--i:2"><b>Em resumo:</b> erros em decisões militares podem custar vidas, por isso uma pessoa precisa decidir.</div>
+ <div class="g g2">
+  <div class="card rv" style="--i:3"><h3 class="cy">Possíveis aplicações</h3>
+   <ul class="chips c"><li>Análise de informações</li><li>Planejamento</li><li>Simulações</li><li>Sistemas de defesa</li><li>Apoio a decisões</li><li>Pesquisa e desenvolvimento</li></ul></div>
+  <div class="card r rv" style="--i:4"><h3>Principais riscos</h3>
+   <ul class="chips r"><li>Erros de sistemas</li><li>Decisões incorretas</li><li>Reações difíceis de prever</li><li>Menos controle humano</li><li>Uso indevido</li><li>Consequências para civis</li><li>Difícil responsabilizar</li></ul></div>
+ </div>
+ <div class="fl4 rv" style="--i:5">
+  <div class="n4" style="--k:0">Decisão humana<small>Define objetivo e limites</small></div>
+  <div class="n4" style="--k:1">Sistema de IA<small>Processa e sugere</small></div>
+  <div class="n4" style="--k:2">Recomendação<small>Pode conter erros</small></div>
+  <div class="n4 l" style="--k:3">Consequência<small>Pode afetar vidas</small></div>
+ </div>
+ <div class="card rv" style="--i:6;margin-top:14px"><h3>Quanto controle humano?</h3>
+  <p style="margin-top:4px">Mova o controle e veja como o risco muda.</p>
+  <input type="range" id="hc" min="0" max="100" value="80" aria-label="Quanto controle humano existe">
+  <div class="lg" style="justify-content:space-between;margin-top:2px"><span>Nenhum</span><span>Total</span></div>
+  <div class="lg" style="margin-top:10px"><span>Risco de um erro causar dano (ilustração)</span></div>
+  <div class="tr" style="margin-top:6px"><i id="hb" style="width:20%"></i></div>
+  <p id="ht" class="hx"></p><details><summary>Entenda a simulação</summary><ul>
+  <li><b>A barra:</b> o risco de um erro virar dano.</li>
+  <li><b>Mais controle humano:</b> uma pessoa pode revisar e parar o erro.</li>
+  <li><b>Menos controle:</b> o erro segue em frente sem ninguém ver.</li></ul>
+  <p>É uma ilustração para explicar a ideia. Não há número medido.</p></details></div>
+ <div class="card r rv" style="--i:7;margin-top:14px"><h3>Um caso real (1983): alerta falso</h3>
+  <p>Em 26 de setembro de 1983, um sistema soviético de alerta apontou um míssil lançado dos EUA e depois mais até quatro. O oficial Stanislav Petrov julgou que era alarme falso. Depois, confirmou-se que o sistema tinha falhado.</p>
+  <p style="margin-top:6px">Não era uma IA moderna, mas mostra por que uma pessoa precisa confirmar antes de agir.</p>
+  <span class="src">Fontes: <a href="https://www.aps.org/apsnews/2026/09/1983-averting-potential-nuclear-war" target="_blank" rel="noopener">APS News</a> · <a href="https://www.history.com/news/nuclear-attack-warning-cold-war-petrov" target="_blank" rel="noopener">History.com</a></span></div>
+ <div class="card sim rv" style="--i:8;margin-top:14px"><h3>Simulação: alerta falso e decisão</h3>
+  <p style="margin-top:6px">Cenário imaginário, com regiões inventadas (A a E). Mostra o que muda quando uma pessoa precisa confirmar antes de agir.</p><p class="how">Como usar: aperte “Receber o alerta” com a opção ligada. Depois desligue a opção e aperte de novo.</p>
+  <svg class="gl" id="gsv" viewBox="0 0 360 220" role="img" aria-label="Globo com cinco regiões fictícias, A a E">
+   <circle class="gb" cx="180" cy="110" r="100"/><ellipse class="gb" cx="180" cy="110" rx="48" ry="100"/><ellipse class="gb" cx="180" cy="110" rx="100" ry="38"/><line class="gb" x1="80" y1="110" x2="280" y2="110"/>
+   <path class="arc0" id="a0" d="M120 90 Q182 55 245 85"/>
+   <path class="arc" id="a1" pathLength="1" d="M120 90 Q182 55 245 85"/>
+   <path class="arc" id="a2" pathLength="1" d="M245 85 Q182 100 120 90"/>
+   <path class="arc" id="a3" pathLength="1" d="M245 85 Q268 118 230 150"/>
+   <path class="arc" id="a4" pathLength="1" d="M230 150 Q182 178 135 155"/>
+   <path class="arc" id="a5" pathLength="1" d="M135 155 Q100 122 120 90"/>
+   <path class="arc" id="a6" pathLength="1" d="M185 48 Q220 50 245 85"/>
+   <path class="arc" id="a7" pathLength="1" d="M185 48 Q140 52 120 90"/>
+   <circle class="rg" id="rA" cx="120" cy="90" r="7"/><circle class="rg" id="rB" cx="245" cy="85" r="7"/><circle class="rg" id="rC" cx="135" cy="155" r="7"/><circle class="rg" id="rD" cx="230" cy="150" r="7"/><circle class="rg" id="rE" cx="185" cy="48" r="7"/>
+   <circle class="n0" cx="120" cy="90" r="6"/><circle class="n0" cx="245" cy="85" r="6"/><circle class="n0" cx="135" cy="155" r="6"/><circle class="n0" cx="230" cy="150" r="6"/><circle class="n0" cx="185" cy="48" r="6"/>
+   <text x="120" y="76">A</text><text x="245" y="71">B</text><text x="135" y="176">C</text><text x="230" y="171">D</text><text x="185" y="34">E</text>
+  </svg>
+  <ul class="log" id="mlg" aria-live="polite"></ul>
+  <div class="lg"><span>Nível de tensão (ilustração)</span></div><div class="pbar" style="margin-top:6px"><i id="mbar"></i></div>
+  <div class="ctl"><button class="btn" id="mb">▶ Receber o alerta</button><label class="sw"><input type="checkbox" id="mc" checked><span></span>Uma pessoa confirma antes</label><b class="cnt" id="mst" style="color:#fff">Estado: calmo</b></div>
+  <p class="nt">Cenário imaginário. As regiões não são países reais e nada aqui mostra como armas funcionam.</p><details><summary>Entenda a simulação</summary><ul>
+  <li><b>Regiões A a E:</b> lugares inventados, só para o desenho.</li>
+  <li><b>Alerta falso:</b> o sensor errou e avisou um ataque que não existe, como no caso real de 1983.</li>
+  <li><b>Pessoa confirma:</b> antes de agir, alguém confere outras fontes e pode cancelar.</li>
+  <li><b>Sem pessoa:</b> a IA age sozinha. As linhas brancas são respostas militares fictícias, e uma resposta leva a outra.</li>
+  <li><b>Barra de tensão:</b> mostra o quanto a situação piora. É uma ilustração, sem valores medidos.</li></ul>
+  <p><b>Na vida real:</b> o CICV defende que uma pessoa continue no controle das armas. Este cenário mostra o que pode acontecer quando isso falta.</p></details></div>
+ <div class="g g2">
+  <div class="card rv" style="--i:6"><h3>O que dizem instituições</h3>
+   <p>O Comitê Internacional da Cruz Vermelha (CICV) diz que uma pessoa deve continuar no controle das armas.</p>
+   <span class="src"><a href="https://www.icrc.org/en/document/towards-limits-autonomous-weapons" target="_blank" rel="noopener">CICV: limites à autonomia</a></span></div>
+  <div class="card r rv" style="--i:7"><h3>O que é uma arma autônoma?</h3>
+   <p>Para o SIPRI e o CICV, é um sistema que, depois de ligado, escolhe e ataca alvos sem ajuda de uma pessoa. O risco é perder o controle sobre decisões de vida ou morte.</p>
+   <span class="src"><a href="https://www.sipri.org/media/press-release/2020/new-sipri-and-icrc-report-identifies-necessary-controls-autonomous-weapons" target="_blank" rel="noopener">SIPRI e CICV (2020)</a></span></div>
+ </div>
+ <div class="quote r rv" style="--i:8">Quanto maior o impacto de uma decisão, maior deve ser o cuidado com o uso da tecnologia.</div>
+</div></section>
+
+<!-- SLIDE 5 -->
+<section class="slide" aria-label="Slide 5"><div class="wrap">
+ <span class="tag rv">Consequências e respostas</span>
+ <h2 class="rv" style="--i:1">O que pode acontecer e como reduzir os riscos</h2><div class="sum rv" style="--i:2"><b>Em resumo:</b> os riscos são reais, mas dá para reduzi-los com regras e controle.</div>
+ <div class="g g2" style="align-items:start">
+  <div>
+   <h3 class="rd rv" style="--i:2">O que pode acontecer?</h3>
+   <div class="bars" style="margin-top:12px">
+    <div class="card r rv" style="--i:3"><h3>Pessoas</h3><p>Fraudes, exposição de informações e outros danos.</p></div>
+    <div class="card r rv" style="--i:4"><h3>Empresas</h3><p>Prejuízos, interrupções e perda de dados.</p></div>
+    <div class="card r rv" style="--i:5"><h3>Sociedade</h3><p>Mais ameaças digitais e menos confiança no que se vê e lê.</p></div>
+    <div class="card r rv" style="--i:6"><h3>Segurança</h3><p>Fica mais difícil perceber e responder a ameaças.</p></div>
+    <div class="card r rv" style="--i:7"><h3>Conflitos</h3><p>Danos graves se a IA for usada em situações militares.</p></div>
+   </div>
+  </div>
+  <div>
+   <h3 class="cy rv" style="--i:2">Como reduzir os riscos?</h3>
+   <div class="card rv" style="--i:3;margin-top:12px"><p class="src" style="margin:0 0 4px">Toque nas medidas para ativá-las.</p><ul class="chips c" id="ctl">
+    <li>Supervisão humana</li><li>Testes de segurança</li><li>Regras claras</li><li>Responsabilidade</li><li>Limitar o acesso</li><li>Defesas digitais</li><li>Acompanhar a IA</li><li>Criar com cuidado</li></ul><p class="hx" id="cd">Toque em uma medida para ligar e ver o que ela quer dizer.</p></div>
+   <div class="card rv" style="--i:5;margin-top:14px"><h3>Ative as medidas e veja o risco cair</h3>
+    <div class="bars">
+     <div class="br"><span>Sem nenhuma medida</span><div class="tr"><i></i></div></div>
+     <div class="br"><span id="cn">0 de 8 medidas ativas</span><div class="tr k"><i id="kb" style="width:92%"></i></div></div>
+    </div>
+    <span class="src">Ilustração qualitativa, sem valores medidos.</span></div>
+   <div class="card rv" style="--i:6;margin-top:14px"><h3>Exemplo real de resposta</h3><p>A Anthropic bloqueou as contas, avisou as vítimas, falou com as autoridades e criou novas formas de detectar esse uso.</p>
+    <span class="src"><a href="https://www.anthropic.com/news/disrupting-AI-espionage" target="_blank" rel="noopener">Anthropic (2025)</a></span></div>
+  </div>
+ </div>
+ <div class="card sim rv" style="--i:9;margin-top:18px"><h3>Cenário imaginário: uma IA “fora de controle”</h3>
+  <p style="margin-top:6px">Isso é ficção. Nenhuma IA real faz isso hoje. Serve só para ver o que o controle muda.</p><p class="how">Como usar: rode sem nenhuma proteção. Depois ligue uma ou as duas e rode de novo.</p>
+  <div class="wg" id="wg" role="img" aria-label="Grade de sistemas fictícios"></div>
+  <div class="lg"><span><b></b>Sistema afetado</span><span><b class="h"></b>Sistema normal</span></div>
+  <div class="ctl"><button class="btn" id="wb">▶ Rodar cenário</button><label class="sw"><input type="checkbox" id="w1"><span></span>Supervisão humana</label><label class="sw"><input type="checkbox" id="w2"><span></span>Limite de acesso</label></div>
+  <p class="cnt" style="margin-top:6px">Sistemas afetados (fictício): <b id="wc">0%</b></p>
+  <p class="hx" id="wm"></p><details><summary>Entenda a simulação</summary><ul>
+  <li><b>Cada quadrado:</b> um sistema inventado, como o computador de uma empresa ou de um serviço.</li>
+  <li><b>Branco:</b> sistema afetado. A porcentagem é inventada.</li>
+  <li><b>Supervisão humana:</b> uma pessoa percebe o problema e corrige.</li>
+  <li><b>Limite de acesso:</b> a IA só pode mexer no que precisa, então o problema passa mais devagar de um sistema para outro.</li></ul>
+  <p><b>Importante:</b> é ficção. Nenhuma IA real faz isso hoje. No caso real da Anthropic, a IA ainda errava e as pessoas tomaram decisões importantes.</p></details></div>
+ <div class="pipe rv" style="--i:8"><span class="a">Risco</span>→<span class="b">Controle</span>→<span class="c">Risco reduzido</span></div>
+ <p class="lead rv" style="--i:9;text-align:center;margin-left:auto;margin-right:auto">Essas medidas ajudam a diminuir os riscos, mas não acabam com eles.</p>
+</div></section>
+
+<!-- SLIDE 6 -->
+<section class="slide" aria-label="Slide 6"><div class="wrap">
+ <span class="tag rv">Conclusão</span>
+ <h2 class="rv" style="--i:1">A questão não é apenas o que a IA consegue fazer.</h2><div class="sum rv" style="--i:2"><b>Em resumo:</b> o que importa é como a IA é usada e quem se responsabiliza.</div>
+ <div class="g" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))">
+  <div class="card rv" style="--i:2"><h3 class="cy">O que a IA consegue fazer?</h3><p>Capacidades cada vez maiores.</p></div>
+  <div class="card r rv" style="--i:3"><h3>Como ela pode ser usada?</h3><p>Para objetivos positivos ou prejudiciais.</p></div>
+  <div class="card rv" style="--i:4"><h3 class="cy">Como reduzir os riscos?</h3><p>Responsabilidade, segurança, supervisão e regras adequadas.</p></div>
+ </div>
+ <div class="core rv" style="--i:5">TECNOLOGIA + RESPONSABILIDADE</div>
+ <p class="lead rv" style="--i:6;text-align:center;margin-left:auto;margin-right:auto">A IA traz grandes benefícios, mas exige cuidado, principalmente em ataques digitais e em situações militares.</p>
+ <div class="quote rv" style="--i:7">O avanço da IA precisa ser acompanhado pelo avanço da segurança e da responsabilidade.</div>
+ <div class="card rv" style="--i:8;margin-top:22px"><h3>Fontes</h3>
+  <ol class="srcs">
+   <li>Anthropic. <a href="https://www.anthropic.com/news/disrupting-AI-espionage" target="_blank" rel="noopener">Disrupting the first reported AI-orchestrated cyber espionage campaign</a> (13/11/2025).</li>
+   <li>Anthropic. <a href="https://assets.anthropic.com/m/ec212e6566a0d47/original/Disrupting-the-first-reported-AI-orchestrated-cyber-espionage-campaign.pdf" target="_blank" rel="noopener">Relatório completo da campanha</a>.</li>
+   <li>Anthropic. <a href="https://www.anthropic.com/news/detecting-countering-misuse-aug-2025" target="_blank" rel="noopener">Detecting and countering misuse of AI: August 2025</a> (27/08/2025).</li>
+   <li>CICV. <a href="https://www.icrc.org/en/document/towards-limits-autonomous-weapons" target="_blank" rel="noopener">Towards limits on autonomy in weapon systems</a>.</li>
+   <li>SIPRI e CICV. <a href="https://www.sipri.org/media/press-release/2020/new-sipri-and-icrc-report-identifies-necessary-controls-autonomous-weapons" target="_blank" rel="noopener">Report identifies necessary controls on autonomous weapons</a> (2020).</li>
+   <li>APS News. <a href="https://www.aps.org/apsnews/2026/09/1983-averting-potential-nuclear-war" target="_blank" rel="noopener">September 1983: Soviet officer defies military protocol</a>.</li>
+   <li>History.com. <a href="https://www.history.com/news/nuclear-attack-warning-cold-war-petrov" target="_blank" rel="noopener">Petrov e o falso alarme nuclear de 1983</a>.</li>
+  </ol></div>
+</div></section>
+
+<nav aria-label="Navegação dos slides">
+ <div class="pg"><i id="pb"></i></div>
+ <div class="nv"><button id="pv" aria-label="Slide anterior">←</button><span id="ct" aria-live="polite">1 / 6</span><button id="nx" aria-label="Próximo slide">→</button><button id="fs" aria-label="Tela cheia" title="Tela cheia (F)" hidden>⛶</button></div>
+ <div class="tt" id="tt">O avanço da IA</div>
+</nav>
+
+<script>
+(function(){
+ var S=[].slice.call(document.querySelectorAll('.slide')),n=S.length,cur=0,pv=document.getElementById('pv'),nx=document.getElementById('nx'),ct=document.getElementById('ct'),pb=document.getElementById('pb'),tt=document.getElementById('tt'),NM=['O avanço da IA','IA e ataques digitais','Caso real','IA e armas','Consequências e soluções','Conclusão'];
+ var rm=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ function count(sl){var qq=sl.querySelector('#bq');if(qq)tw(qq);
+  [].forEach.call(sl.querySelectorAll('.num'),function(el){
+   var a=+el.dataset.a,b=el.dataset.b?+el.dataset.b:null,s=el.dataset.s||'',p=el.dataset.p||'',fin=p+a+(b!==null?'–'+b:'')+s;
+   if(rm){el.textContent=fin;return}
+   var t0=null;function f(t){if(!t0)t0=t;var k=Math.min((t-t0)/1100,1),e=1-Math.pow(1-k,3);
+    el.textContent=p+Math.round(a*e)+(b!==null?'–'+Math.round(b*e):'')+s;if(k<1)requestAnimationFrame(f);else el.textContent=fin}
+   setTimeout(function(){requestAnimationFrame(f)},500);
+  });
+ }
+ function go(i){
+  if(i<0||i>=n||i===cur)return;
+  var o=S[cur];o.classList.remove('on');o.classList.add('out');setTimeout(function(){o.classList.remove('out')},500);
+  cur=i;var s=S[cur];s.scrollTop=0;s.classList.remove('on');void s.offsetWidth;s.classList.add('on');
+  ct.textContent=(cur+1)+' / '+n;tt.textContent=NM[cur];pb.style.width=((cur+1)/n*100)+'%';pv.disabled=cur===0;nx.disabled=cur===n-1;
+  count(s);try{s.focus({preventScroll:true});pr.onchange();wrs();mclr()}catch(err){}
+ }
+ pv.onclick=function(){go(cur-1)};nx.onclick=function(){go(cur+1)};
+ document.addEventListener('keydown',function(e){
+  if(e.target&&e.target.type==='range')return;
+  if(e.key==='Home'){go(0);return}if(e.key==='End'){go(n-1);return}
+  if(/^[1-6]$/.test(e.key)&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&e.target.tagName!=='INPUT'){go(+e.key-1);return}
+  if((e.key==='f'||e.key==='F')&&fsb&&!fsb.hidden&&e.target.tagName!=='INPUT'){tfs();return}
+  if(e.key==='ArrowRight'||e.key==='PageDown'){go(cur+1)}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'){go(cur-1)}
+ });
+ var x0=null,y0=null;
+ document.addEventListener('touchstart',function(e){x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
+ document.addEventListener('touchend',function(e){if(x0===null)return;var dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;
+  if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*1.6)go(cur+(dx<0?1:-1));x0=null},{passive:true});
+ pv.disabled=true;pb.style.width=(100/n)+'%';count(S[0]);
+ /* simulação */
+ var gb=document.getElementById('go'),pr=document.getElementById('pr'),lg=document.getElementById('lg'),ln=document.getElementById('ln'),na=document.getElementById('na'),nt=document.getElementById('nt'),tc=document.getElementById('tc'),ns=document.getElementById('ns'),sb=document.getElementById('sb'),tm=[],iv,cc=0;
+ function add(t,k){var l=document.createElement('li');l.textContent=t;if(k)l.className='k';lg.appendChild(l)}
+ gb.onclick=function(){
+  tm.forEach(clearTimeout);tm=[];clearInterval(iv);cc=0;tc.textContent=0;lg.innerHTML='';nt.className='nd t';ns.textContent='dados: normais';sb.style.width=0;ln.className='lane';na.className='nd a';gb.disabled=true;
+  var p=pr.checked,d=rm?200:1500,i=0;
+  var st=[['1. A IA recebe o comando e monta um plano.'],['2. Ela observa o sistema por fora, procurando falhas.'],['3. Ela faz várias tentativas de entrar, bem rápido.']];
+  p?st.push(['4. A proteção percebe o movimento estranho.'],['Resultado: acesso bloqueado e a equipe é avisada.',1]):st.push(['4. Ninguém percebe as tentativas.'],['Resultado: dados da empresa ficam expostos (simulado).',1]);
+  st.forEach(function(x,j){tm.push(setTimeout(function(){
+   add(x[0],x[1]);sb.style.width=((j+1)/st.length*100)+'%';
+   if(j===2){ln.className='lane run'+(p?' blk':'');na.classList.add('go');iv=setInterval(function(){cc+=Math.floor(Math.random()*13)+7;tc.textContent=cc},90)}
+   if(j===st.length-1){clearInterval(iv);na.classList.remove('go');ln.classList.remove('run');nt.classList.add(p?'ok':'bad');ns.textContent=p?'dados: protegidos':'dados: expostos';gb.disabled=false;gb.textContent='▶ Executar de novo'}
+  },j*d))});
+ };
+ pr.onchange=function(){tm.forEach(clearTimeout);clearInterval(iv);cc=0;tc.textContent=0;lg.innerHTML='';nt.className='nd t';ns.textContent='dados: normais';sb.style.width=0;ln.className='lane';na.className='nd a';gb.disabled=false;gb.textContent='▶ Executar comando'};
+ /* extras */
+ var hc=document.getElementById('hc'),hb=document.getElementById('hb'),ht=document.getElementById('ht');
+ function hu(){var v=+hc.value;hb.style.width=Math.max(8,100-v)+'%';
+  ht.textContent=v>=70?'Uma pessoa revisa e decide. Os erros são pegos antes de causar dano.':v>=35?'A pessoa só olha de vez em quando. Alguns erros passam.':'Quase ninguém revisa. Um erro pode virar algo grave sem ser notado.'}
+ hc.oninput=hu;hu();
+ var cdE=document.getElementById('cd'),DEF=['Uma pessoa acompanha a IA e pode pará-la.','Testar a IA antes de liberar, para achar falhas e usos perigosos.','Leis e normas que dizem o que pode e o que não pode.','Saber quem responde quando algo dá errado.','Só quem precisa usa a IA, e só no que precisa.','Defesas que percebem e bloqueiam tentativas estranhas.','Observar o que a IA passa a conseguir fazer, para se preparar.','Criar a IA pensando nos riscos desde o começo.'],chs=[].slice.call(document.querySelectorAll('#ctl li')),kb=document.getElementById('kb'),cn=document.getElementById('cn');
+ function upd(){var k=chs.filter(function(l){return l.classList.contains('on')}).length;kb.style.width=Math.max(30,92-k*8)+'%';cn.textContent=k+' de 8 medidas ativas'}
+ chs.forEach(function(l){l.tabIndex=0;l.setAttribute('role','button');l.setAttribute('aria-pressed','false');
+  function t(){l.classList.toggle('on');cdE.textContent=DEF[chs.indexOf(l)];l.setAttribute('aria-pressed',l.classList.contains('on'));upd()}
+  l.onclick=t;l.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();t()}}});
+ var sp=document.getElementById('sp');
+ document.addEventListener('pointermove',function(e){if(e.pointerType==='mouse'){sp.style.setProperty('--x',e.clientX+'px');sp.style.setProperty('--y',e.clientY+'px')}});
+ /* diversão */
+ var twt;
+ function tw(el){var f=el.dataset.t||(el.dataset.t=el.textContent);clearInterval(twt);
+  if(rm){el.textContent=f;return}
+  if(!el.style.minHeight)el.style.minHeight=el.offsetHeight+'px';
+  el.textContent='\u00a0';setTimeout(function(){var i=0;el.textContent='';twt=setInterval(function(){i++;el.textContent=f.slice(0,i);if(i>=f.length)clearInterval(twt)},26)},900)}
+ var pg=document.getElementById('pg'),pm=document.getElementById('pm'),pc=document.getElementById('pc'),pt=document.getElementById('pt');
+ var PA='“bnco: sua conta foi bloquiada!! clike aki agora pra resolver [link]”',PB='“Olá! Notamos uma atividade incomum na sua conta. Para sua segurança, confirme seus dados em até 1 hora pelo link abaixo. [link]”';
+ function pu(){var on=pg.checked;pm.textContent=on?PB:PA;pc.className='chips r'+(on?' hot':'');
+  pt.textContent=on?'Agora o texto parece perfeito. Mas o golpe é o mesmo: pressa, pedido de dados e link. Na dúvida, abra o app oficial do banco.':'Antes, os erros de escrita ajudavam a desconfiar.'}
+ pg.onchange=pu;pu();
+ var wg=document.getElementById('wg'),wb=document.getElementById('wb'),w1=document.getElementById('w1'),w2=document.getElementById('w2'),wcn=document.getElementById('wc'),wm=document.getElementById('wm'),wcl=[],wi=[],wt,GC=10,GN=60;
+ for(var qi=0;qi<GN;qi++){var dv=document.createElement('div');dv.className='c';wg.appendChild(dv);wcl.push(dv)}
+ function wnb(i){var r=Math.floor(i/GC),k=i%GC,a=[];if(r>0)a.push(i-GC);if(r<5)a.push(i+GC);if(k>0)a.push(i-1);if(k<GC-1)a.push(i+1);return a}
+ function wup(){var m=0;for(var i=0;i<GN;i++){if(wi[i])m++;wcl[i].className=wi[i]?'c x':'c'}wcn.textContent=Math.round(m/GN*100)+'%';return m}
+ function wrs(){clearInterval(wt);wi=[];for(var i=0;i<GN;i++)wi.push(false);wup();wm.textContent='';wb.disabled=false;wb.textContent='▶ Rodar cenário'}
+ function wend(msg){clearInterval(wt);wm.textContent=msg;wb.disabled=false;wb.textContent='▶ Rodar de novo'}
+ wb.onclick=function(){wrs();wb.disabled=true;wi[0]=true;wup();var tk=0,p=w2.checked?.3:.85,stop=false;
+  wt=setInterval(function(){tk++;
+   if(w1.checked&&tk===4&&!stop){stop=true;wm.textContent='Uma pessoa percebeu o problema e começou a corrigir.'}
+   var m;
+   if(stop){var ar=[];wi.forEach(function(v,i){if(v)ar.push(i)});
+    for(var k=0;k<7&&ar.length;k++){wi[ar.splice(Math.floor(Math.random()*ar.length),1)[0]]=false}
+    m=wup();if(m===0)wend('Problema corrigido a tempo. Foi isso que a supervisão mudou.')}
+   else{var nw=[];wi.forEach(function(v,i){if(v)wnb(i).forEach(function(j){if(!wi[j]&&Math.random()<p)nw.push(j)})});
+    nw.forEach(function(j){wi[j]=true});m=wup();
+    if(m===GN)wend('Sem ninguém para parar, o problema tomou tudo (só no cenário imaginário).');
+    else if(tk>=18)wend('O limite de acesso deixou tudo mais lento, mas o problema ainda cresceu.')}
+  },rm?60:380)};
+ w1.onchange=w2.onchange=wrs;wrs();
+ var tlc=null;
+ document.addEventListener('pointermove',function(e){if(e.pointerType!=='mouse')return;
+  var cd=e.target.closest?e.target.closest('.card'):null;
+  if(tlc&&tlc!==cd){tlc.style.removeProperty('--rx');tlc.style.removeProperty('--ry');tlc=null}
+  if(cd&&!cd.querySelector('input,button')){var rc=cd.getBoundingClientRect();cd.style.setProperty('--ry',((e.clientX-rc.left)/rc.width-.5)*6+'deg');cd.style.setProperty('--rx',(.5-(e.clientY-rc.top)/rc.height)*6+'deg');tlc=cd}});
+ /* alerta falso */
+ var mb=document.getElementById('mb'),mc=document.getElementById('mc'),mlg=document.getElementById('mlg'),mbar=document.getElementById('mbar'),mst=document.getElementById('mst'),mtm=[];
+ function mq(i){return document.getElementById(i)}
+ function mclr(){mtm.forEach(clearTimeout);mtm=[];mlg.innerHTML='';mbar.style.width=0;mst.textContent='Estado: calmo';
+  [].forEach.call(document.querySelectorAll('#gsv .arc'),function(a){a.classList.remove('fire')});
+  [].forEach.call(document.querySelectorAll('#gsv .rg'),function(a){a.classList.remove('pop')});
+  mq('a0').classList.remove('chk');mb.disabled=false;mb.textContent='▶ Receber o alerta'}
+ function mfire(i){mq(i).classList.add('fire')}
+ function mpop(i){var e=mq(i);e.classList.remove('pop');void e.getBoundingClientRect();e.classList.add('pop')}
+ mb.onclick=function(){mclr();mb.disabled=true;var ok=mc.checked,d=rm?250:1800,L=[];
+  L.push(['1. O sensor avisa: algo foi lançado pela Região B. (Mas é um erro do sensor. Ninguém sabe ainda.)',0,function(){mpop('rB')},20,'Estado: alerta']);
+  L.push(['2. A IA analisa o aviso e recomenda: responder.',0,function(){mpop('rA')},35,'Estado: alerta']);
+  if(ok){L.push(['3. Uma pessoa pede confirmação por outras fontes.',0,function(){mq('a0').classList.add('chk')},45,'Estado: verificando']);
+   L.push(['4. Nenhuma outra fonte confirma. Era alarme falso.',0,function(){mq('a0').classList.remove('chk')},10,'Estado: calmo']);
+   L.push(['Resultado: nada é lançado. A pessoa evitou o erro.',1,null,0,'Estado: calmo'])}
+  else{L.push(['3. Sem ninguém para conferir, a IA age sozinha.',0,function(){mfire('a1');mpop('rB')},55,'Estado: tenso']);
+   L.push(['4. A Região B acha que foi atacada e responde.',0,function(){mfire('a2');mpop('rA')},70,'Estado: tenso']);
+   L.push(['5. As outras regiões também reagem.',0,function(){['a3','a4','a5','a6','a7'].forEach(function(a,i){mtm.push(setTimeout(function(){mfire(a)},i*220))});['rC','rD','rE'].forEach(mpop)},90,'Estado: crise']);
+   L.push(['Resultado: um erro do sensor virou uma crise enorme (só no cenário imaginário).',1,null,100,'Estado: crise'])}
+  L.forEach(function(x,j){mtm.push(setTimeout(function(){var li=document.createElement('li');li.textContent=x[0];if(x[1])li.className='k';mlg.appendChild(li);
+   if(x[2])x[2]();mbar.style.width=x[3]+'%';mst.textContent=x[4];
+   if(j===L.length-1){mb.disabled=false;mb.textContent='▶ Executar de novo'}},j*d))})};
+ mc.onchange=mclr;mclr();
+ /* apoio à apresentação */
+ var fsb=document.getElementById('fs');
+ function tfs(){var d=document,r;if(!d.fullscreenElement){r=d.documentElement.requestFullscreen&&d.documentElement.requestFullscreen()}else{r=d.exitFullscreen()}if(r&&r.catch)r.catch(function(){})}
+ if(document.documentElement.requestFullscreen){fsb.hidden=false;fsb.onclick=tfs}
+ S.forEach(function(x){x.tabIndex=-1});S[0].focus({preventScroll:true});
+ /* partículas discretas */
+ var c=document.getElementById('bg'),x=c.getContext('2d'),P=[],W,H,N;
+ function rs(){var d=Math.min(window.devicePixelRatio||1,2);W=innerWidth;H=innerHeight;c.width=W*d;c.height=H*d;x.setTransform(d,0,0,d,0,0);N=Math.round(Math.min(60,W*H/22000));
+  P=[];for(var i=0;i<N;i++)P.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25})}
+ function dr(){x.clearRect(0,0,W,H);
+  for(var i=0;i<P.length;i++){var a=P[i];a.x+=a.vx;a.y+=a.vy;if(a.x<0||a.x>W)a.vx*=-1;if(a.y<0||a.y>H)a.vy*=-1;
+   x.fillStyle='rgba(200,200,200,.55)';x.beginPath();x.arc(a.x,a.y,1.4,0,6.3);x.fill();
+   for(var j=i+1;j<P.length;j++){var b=P[j],dx=a.x-b.x,dy=a.y-b.y,d=dx*dx+dy*dy;
+    if(d<16000){x.strokeStyle='rgba(200,200,200,'+(.16*(1-d/16000))+')';x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke()}}}
+  if(!rm&&!document.hidden)requestAnimationFrame(dr)}
+ rs();dr();addEventListener('resize',function(){rs();if(rm)dr()});
+ document.addEventListener('visibilitychange',function(){if(!document.hidden&&!rm)dr()});
+})();
+</script>
+</body>
+</html>
